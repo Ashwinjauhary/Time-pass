@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Ultimate Funny Web</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF005C;
+            --secondary: #6c5ce7;
+            --bg: #1a1a2e;
+            --glass: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.2);
+            --text: #fff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            user-select: none; /* Can't select text easily */
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- UTILS --- */
+        .hidden { display: none !important; }
+        .flex-center { display: flex; justify-content: center; align-items: center; }
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { transform: scale(1.05); }
+
+        /* --- LOGIN SECTION --- */
+        #login-section {
+            height: 100vh;
+            width: 100%;
+            background: radial-gradient(circle at center, #2e2e4d 0%, #1a1a2e 100%);
+            position: fixed;
+            z-index: 100;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .login-box {
+            width: 90%;
+            max-width: 400px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .funny-input-group {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .funny-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .funny-input:focus { border-color: var(--primary); }
+
+        .roast-msg {
+            display: block;
+            color: #ff4757;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-weight: bold;
+            min-height: 20px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* --- DASHBOARD SECTION --- */
+        #dashboard-section {
+            padding: 20px;
+            display: none; /* Hidden initially */
+            animation: fadeIn 1s;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding-bottom: 50px;
+        }
+
+        .feature-card {
+            padding: 20px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .icon-large { font-size: 2.5rem; margin-bottom: 15px; color: var(--secondary); }
+        
+        /* Specific Feature Styles */
+        .falling { animation: fallDown 2s forwards; }
+        @keyframes fallDown { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+        
+        .spin-wild { animation: spin 0.5s infinite linear; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+        /* Toast Notification */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 10px;
+            transform: translateY(100px);
+            transition: transform 0.3s;
+            z-index: 1000;
+            border-left: 5px solid var(--primary);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. TOAST NOTIFICATION SYSTEM -->
+    <div id="toast">Welcome to the chaos!</div>
+
+    <!-- 2. LOGIN PAGE -->
+    <div id="login-section" class="flex-center">
+        <div class="glass-panel login-box">
+            <h1 style="font-size: 3rem; margin-bottom: 10px;">💩</h1>
+            <h2>Totally Secure Login</h2>
+            <p style="color: #aaa; font-size: 0.8rem; margin-bottom: 30px;">We definitely don't sell your data.</p>
+            
+            <div class="funny-input-group">
+                <label>Name (Fake names allowed)</label>
+                <input type="text" class="funny-input" id="inp-name" placeholder="Batman?">
+            </div>
+
+            <div class="funny-input-group">
+                <label>Email</label>
+                <input type="email" class="funny-input" id="inp-email" placeholder="Enter email...">
+                <!-- 3. THE FUNNY MSG (Editable in JS) -->
+                <span id="email-roast" class="roast-msg"></span>
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%;" onclick="attemptLogin()">ENTER THE MATRIX</button>
+            <p style="margin-top: 15px; font-size: 0.7rem; color: #666; cursor: pointer;" onclick="alert('Too bad, we forgot it too.')">Forgot Password?</p>
+        </div>
+    </div>
+
+    <!-- 4. DASHBOARD (The "Bahut Badi Web") -->
+    <div id="dashboard-section">
+        <header class="glass-panel">
+            <h3><i class="fas fa-biohazard"></i> ChaosOS v1.0</h3>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <span id="user-display">Guest</span>
+                <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%; overflow: hidden;">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix" alt="avatar" width="40" id="avatar-img">
+                </div>
+            </div>
+        </header>
+
+        <div class="feature-grid" id="grid-container">
+            <!-- FEATURES WILL BE INJECTED HERE VIA JS -->
+        </div>
+    </div>
+
+    <!-- SOUND EFFECTS (Invisible) -->
+    <audio id="click-sound" src="data:audio/wav;base64,UklGRi8AAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="></audio>
+
+    <script>
+        // --- CONFIG & STATE ---
+        const features = [];
+        let clickCount = 0;
+        let isGravityOn = false;
+
+        // --- 5. INITIALIZATION ---
+        window.onload = () => {
+            initLoginEvents();
+            generateFeatures();
+        };
+
+        // --- 6. LOGIN LOGIC ---
+        function initLoginEvents() {
+            const emailInp = document.getElementById('inp-email');
+            const roastMsg = document.getElementById('email-roast');
+
+            // THE ROAST MESSAGE LOGIC
+            emailInp.addEventListener('focus', () => {
+                roastMsg.textContent = "Whoever fills this loves pineapple on pizza 🍍🍕"; // <--- CHANGE TEXT HERE IF NEEDED
+                roastMsg.style.opacity = '1';
+            });
+            
+            emailInp.addEventListener('blur', () => {
+                roastMsg.style.opacity = '0';
+            });
+        }
+
+        function attemptLogin() {
+            const name = document.getElementById('inp-name').value || "Potato";
+            document.getElementById('user-display').textContent = name;
+            
+            // Animation out
+            const loginSec = document.getElementById('login-section');
+            loginSec.style.transform = "translateY(-100vh)";
+            
+            // Show Dashboard
+            setTimeout(() => {
+                document.getElementById('dashboard-section').style.display = 'block';
+                showToast(`Welcome, ${name}! Prepare to suffer.`);
+            }, 500);
+        }
+
+        // --- 7. FEATURE GENERATOR ENGINE ---
+        function generateFeatures() {
+            const grid = document.getElementById('grid-container');
+            
+            // Defining 30+ Features manually for the "40 MVP" feel
+            const featureList = [
+                { icon: 'fa-bomb', title: 'Don\'t Click', action: 'explode()' },
+                { icon: 'fa-toggle-off', title: 'Useless Switch', action: 'toggleUseless(this)' },
+                { icon: 'fa-virus', title: 'Virus Scan', action: 'virusScan()' },
+                { icon: 'fa-user-edit', title: 'Edit Profile', action: 'runAway(this)', customClass: 'runaway-btn' },
+                { icon: 'fa-moon', title: 'Dark Mode', action: 'fakeDarkMode()' },
+                { icon: 'fa-calculator', title: 'Bad Calculator', action: 'alert("2 + 2 = 5")' },
+                { icon: 'fa-trash', title: 'Recycle Bin', action: 'trashItems()' },
+                { icon: 'fa-hourglass-half', title: 'Waster', action: 'timeWaster(this)' },
+                { icon: 'fa-battery-quarter', title: 'Drain Battery', action: 'drainAnim(this)' },
+                { icon: 'fa-lock', title: 'Password Strength', action: 'checkPass()' },
+                { icon: 'fa-music', title: 'Mute Life', action: 'showToast("Cannot mute internal screaming.")' },
+                { icon: 'fa-wifi', title: 'Steal WiFi', action: 'loadingBar("Hacking neighbor...")' },
+                { icon: 'fa-print', title: 'Print Money', action: 'printMoney()' },
+                { icon: 'fa-arrow-down', title: 'Gravity', action: 'toggleGravity()' },
+                { icon: 'fa-eye', title: 'Spy Cam', action: 'alert("We see you picking your nose.")' },
+                { icon: 'fa-language', title: 'Translator', action: 'translatePage()' },
+                { icon: 'fa-thermometer-half', title: 'Phone Temp', action: 'alert("It\'s getting hot in here!")' },
+                { icon: 'fa-bug', title: 'Report Bug', action: 'createBug()' },
+                { icon: 'fa-envelope', title: 'Read Emails', action: 'alert("Inbox: 0 (You have no friends)")' },
+                { icon: 'fa-compass', title: 'Lost?', action: 'spinPage()' },
+                { icon: 'fa-fingerprint', title: 'Touch ID', action: 'alert("Screen dirty. Clean it.")' },
+                { icon: 'fa-ghost', title: 'Seance', action: 'bgScare()' },
+                { icon: 'fa-palette', title: 'Ugly Colors', action: 'uglyColors()' },
+                { icon: 'fa-search', title: 'Find Myself', action: 'alert("Error 404: Soul not found.")' },
+                { icon: 'fa-coffee', title: 'Make Coffee', action: 'loadingBar("Brewing pixels...")' },
+                { icon: 'fa-robot', title: 'Chat with AI', action: 'alert("AI: Leave me alone.")' },
+                { icon: 'fa-cloud-upload-alt', title: 'Upload Brain', action: 'loadingBar("Uploading... Failed (File too small)")' },
+                { icon: 'fa-gift', title: 'Free iPhone', action: 'alert("Just kidding.")' },
+                { icon: 'fa-ban', title: 'Cancel Culture', action: 'removeFeature(this)' },
+                { icon: 'fa-magic', title: 'Disappear', action: 'hideBody()' }
+            ];
+
+            featureList.forEach(f => {
+                const card = document.createElement('div');
+                card.className = `glass-panel feature-card ${f.customClass || ''}`;
+                card.innerHTML = `
+                    <i class="fas ${f.icon} icon-large"></i>
+                    <h4>${f.title}</h4>
+                `;
+                // Add click event safely
+                card.setAttribute('onclick', f.action);
+                grid.appendChild(card);
+            });
+        }
+
+        // --- 8. FEATURE IMPLEMENTATIONS (The Funny Logic) ---
+
+        // Toast Helper
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.transform = "translateY(0)";
+            setTimeout(() => t.style.transform = "translateY(100px)", 3000);
+        }
+
+        // Loading Bar Helper
+        function loadingBar(text) {
+            const originalText = document.getElementById('toast').textContent;
+            showToast(text + " 0%");
+            let prog = 0;
+            const int = setInterval(() => {
+                prog += Math.random() * 10;
+                if(prog >= 100) {
+                    prog = 100;
+                    clearInterval(int);
+                    showToast("Error: Task Failed Successfully.");
+                } else {
+                    document.getElementById('toast').textContent = `${text} ${Math.floor(prog)}%`;
+                }
+            }, 200);
+        }
+
+        // Feature 1: Explode
+        function explode() {
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(c => {
+                c.style.transform = `translate(${Math.random()*100 - 50}px, ${Math.random()*100 - 50}px) rotate(${Math.random()*360}deg)`;
+            });
+            showToast("You broke it!");
+        }
+
+        // Feature 2: Useless Switch
+        function toggleUseless(el) {
+            clickCount++;
+            const icon = el.querySelector('i');
+            if(clickCount % 2 === 0) {
+                icon.className = "fas fa-toggle-off icon-large";
+                el.style.background = "var(--glass)";
+            } else {
+                icon.className = "fas fa-toggle-on icon-large";
+                el.style.background = "rgba(0,255,0,0.2)";
+                showToast(`Switched ON! (Times wasted: ${clickCount})`);
+            }
+        }
+
+        // Feature 3: Runaway Button
+        function runAway(el) {
+            const x = Math.random() * (window.innerWidth - 200);
+            const y = Math.random() * (window.innerHeight - 200);
+            el.style.position = "fixed";
+            el.style.left = x + "px";
+            el.style.top = y + "px";
+            showToast("Catch me if you can!");
+        }
+
+        // Feature 4: Virus Scan
+        function virusScan() {
+            showToast("Scanning for brains...");
+            setTimeout(() => alert("Scan complete: 0 items found."), 2000);
+        }
+
+        // Feature 5: Trash Items
+        function trashItems() {
+            if(confirm("Delete System32?")) {
+                document.body.innerHTML = "<h1 style='color:white; text-align:center; margin-top:20%'>:( <br> Your PC ran into a problem.</h1>";
+            }
+        }
+
+        // Feature 6: Gravity
+        function toggleGravity() {
+            if(isGravityOn) return;
+            isGravityOn = true;
+            const elements = document.querySelectorAll('.feature-card');
+            elements.forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('falling');
+                }, i * 100);
+            });
+            showToast("Oh no...");
+            setTimeout(() => location.reload(), 4000); // Reset page
+        }
+
+        // Feature 7: Fake Dark Mode (Flashlight)
+        function fakeDarkMode() {
+            document.body.style.background = "#000";
+            document.querySelectorAll('*').forEach(el => el.style.color = "#000");
+            showToast("It is dark now. Good luck.");
+        }
+
+        // Feature 8: Create Bug
+        function createBug() {
+            const bug = document.createElement('div');
+            bug.innerHTML = "🐞";
+            bug.style.position = "fixed";
+            bug.style.fontSize = "2rem";
+            bug.style.left = Math.random() * window.innerWidth + "px";
+            bug.style.top = Math.random() * window.innerHeight + "px";
+            bug.style.transition = "all 2s";
+            document.body.appendChild(bug);
+            
+            setInterval(() => {
+                bug.style.left = Math.random() * window.innerWidth + "px";
+                bug.style.top = Math.random() * window.innerHeight + "px";
+            }, 2000);
+        }
+
+        // Feature 9: Spin Page
+        function spinPage() {
+            document.body.classList.add('spin-wild');
+            setTimeout(() => document.body.classList.remove('spin-wild'), 2000);
+        }
+
+        // Feature 10: Print Money
+        function printMoney() {
+            let money = 0;
+            const int = setInterval(() => {
+                money += 100;
+                showToast(`Printing... $${money}`);
+                if(money > 1000) {
+                    clearInterval(int);
+                    alert("Paper jam!");
+                }
+            }, 100);
+        }
+        
+        // Feature 11: Translate
+        function translatePage() {
+            document.body.innerHTML = document.body.innerHTML.replace(/[a-zA-Z]/g, "blah ");
+        }
+
+        // Feature 12: Ugly Colors
+        function uglyColors() {
+            document.documentElement.style.setProperty('--primary', 'brown');
+            document.documentElement.style.setProperty('--bg', 'yellow');
+            document.documentElement.style.setProperty('--text', 'pink');
+        }
+
+        // Feature 13: Time Waster
+        function timeWaster(el) {
+            let sec = 0;
+            el.innerHTML = "<h3>Wait...</h3>";
+            setInterval(() => {
+                sec++;
+                el.innerHTML = `<h3>${sec}s wasted</h3>`;
+            }, 1000);
+        }
+
+        // Feature 14: Drain Anim
+        function drainAnim(el) {
+            el.querySelector('i').className = "fas fa-battery-empty";
+            el.style.opacity = "0.5";
+            showToast("Battery drained by 50% just by clicking this.");
+        }
+
+        // Feature 15: Check Pass
+        function checkPass() {
+            const pass = prompt("Enter password to check strength:");
+            if(pass) alert(`Password strength: Weak like a wet noodle.`);
+        }
+
+        function removeFeature(el) {
+            el.remove();
+            showToast("Feature cancelled.");
+        }
+
+        function bgScare() {
+            document.body.style.backgroundImage = "url('https://media.giphy.com/media/3o7aD2saalBwwftBIY/giphy.gif')"; // Scary gif or funny gif
+            setTimeout(() => document.body.style.backgroundImage = "none", 2000);
+        }
+
+        function hideBody() {
+            document.body.style.opacity = 0;
+            setTimeout(() => document.body.style.opacity = 1, 2000);
+        }
+
+        // Disable Right Click
+        document.addEventListener('contextmenu', event => {
+            event.preventDefault();
+            alert("Hands off my code! 😤");
+        });
+
+    </script>
+</body>
+</html>
